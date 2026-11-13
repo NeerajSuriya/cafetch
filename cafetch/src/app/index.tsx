@@ -1,57 +1,41 @@
 import { Link } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { Button } from '@/components/ui/button';
+import { ScreenContainer } from '@/components/ui/screen-container';
+import { ThemedText } from '@/components/themed-text';
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.cup} accessibilityLabel="Coffee cup">
+    <ScreenContainer contentStyle={styles.content}>
+      <ThemedText type="title" themeColor="accent" accessibilityLabel="Coffee cup" style={styles.cup}>
         ☕
-      </Text>
-      <Text style={styles.title}>Cafetch</Text>
-      <Text style={styles.subtitle}>Discover your next favorite café.</Text>
+      </ThemedText>
+      <ThemedText type="title">Cafetch</ThemedText>
+      <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
+        Discover your next favorite café.
+      </ThemedText>
       <Link href="/explore" asChild>
-        <Pressable style={styles.button} accessibilityRole="button">
-          <Text style={styles.buttonText}>Explore Cafés</Text>
-        </Pressable>
+        <Button label="Explore Cafés" style={styles.button} />
       </Link>
-    </View>
+    </ScreenContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: '#F7F2E8',
-  },
+const styles = {
   cup: {
-    marginBottom: 20,
-    fontSize: 56,
+    fontSize: 48,
+    lineHeight: 56,
+    marginBottom: 8,
   },
-  title: {
-    color: '#4B2E20',
-    fontSize: 36,
-    fontWeight: '600',
-    letterSpacing: 0.5,
+  content: {
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
   },
   subtitle: {
-    marginTop: 10,
-    color: '#4B2E20',
-    fontSize: 16,
-    textAlign: 'center',
+    marginTop: 12,
+    textAlign: 'center' as const,
   },
   button: {
-    marginTop: 32,
-    paddingHorizontal: 28,
-    paddingVertical: 15,
-    borderRadius: 8,
-    backgroundColor: '#4B2E20',
+    marginTop: 28,
   },
-  buttonText: {
-    color: '#F7F2E8',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
+};

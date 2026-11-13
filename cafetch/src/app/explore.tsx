@@ -1,39 +1,32 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ScreenContainer } from '@/components/ui/screen-container';
+import { ThemedText } from '@/components/themed-text';
 
 export default function ExploreScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.cup} accessibilityLabel="Coffee cup">
+    <ScreenContainer contentStyle={styles.content}>
+      <ThemedText type="title" themeColor="accent" accessibilityLabel="Coffee cup" style={styles.cup}>
         ☕
-      </Text>
-      <Text style={styles.title}>Discover Cafés</Text>
-      <Text style={styles.subtitle}>Your next favorite café is waiting.</Text>
-    </View>
+      </ThemedText>
+      <ThemedText type="title">Discover Cafés</ThemedText>
+      <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
+        Your next favorite café is waiting.
+      </ThemedText>
+    </ScreenContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: '#F7F2E8',
-  },
+const styles = {
   cup: {
-    marginBottom: 20,
-    fontSize: 56,
+    fontSize: 48,
+    lineHeight: 56,
+    marginBottom: 8,
   },
-  title: {
-    color: '#4B2E20',
-    fontSize: 30,
-    fontWeight: '600',
-    textAlign: 'center',
+  content: {
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
   },
   subtitle: {
-    marginTop: 10,
-    color: '#4B2E20',
-    fontSize: 16,
-    textAlign: 'center',
+    marginTop: 12,
+    textAlign: 'center' as const,
   },
-});
+};

@@ -1,76 +1,72 @@
-import {
-  Tabs,
-  TabList,
-  TabTrigger,
-  TabSlot,
-  TabTriggerSlotProps,
-  TabListProps,
-} from 'expo-router/ui';
+import { Link, usePathname } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
-import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
+import type { ComponentProps } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { Surface } from '@/components/ui/surface';
+import { ThemedText } from '@/components/themed-text';
+import { useTheme } from '@/hooks/use-theme';
 
-import { ExternalLink } from './external-link';
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
+type TabIcon = 'discover' | 'saved' | 'map' | 'profile';
+type TabItem = {
+  href: '/explore' | '/saved' | '/map' | '/profile';
+  label: string;
+  icon: TabIcon;
+};
+
+const tabs: TabItem[] = [
+  { href: '/explore', label: 'Discover', icon: 'discover' },
+  { href: '/saved', label: 'Saved', icon: 'saved' },
+  { href: '/map', label: 'Map', icon: 'map' },
+  { href: '/profile', label: 'Profile', icon: 'profile' },
+];
+
+const icons = {
+  discover: { ios: 'sparkles', android: 'explore', web: 'explore' },
+  saved: { ios: 'bookmark', android: 'bookmark', web: 'bookmark' },
+  map: { ios: 'map', android: 'map', web: 'map' },
+  profile: { ios: 'person.crop.circle', android: 'account_circle', web: 'account_circle' },
+} as const satisfies Record<TabIcon, ComponentProps<typeof SymbolView>['name']>;
 
 export default function AppTabs() {
-  return (
-    <Tabs>
-      <TabSlot style={{ height: '100%' }} />
-      <TabList asChild>
-        <CustomTabList>
-          <TabTrigger name="home" href="/" asChild>
-            <TabButton>Home</TabButton>
-          </TabTrigger>
-          <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Explore</TabButton>
-          </TabTrigger>
-        </CustomTabList>
-      </TabList>
-    </Tabs>
-  );
-}
-
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
-  return (
-    <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
-      <ThemedView
-        type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
-        style={styles.tabButtonView}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
-          {children}
-        </ThemedText>
-      </ThemedView>
-    </Pressable>
-  );
-}
-
-export function CustomTabList(props: TabListProps) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+  const pathname = usePathname();
+  const insets = useSafeAreaInsets();
+  const theme = useTheme();
 
   return (
-    <View {...props} style={styles.tabListContainer}>
-      <ThemedView type="backgroundElement" style={styles.innerContainer}>
-        <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
-        </ThemedText>
+    <View style={[styles.tabListContainer, { bottom: insets.bottom + Spacing.three }]}>
+      <Surface style={styles.tabSurface}>
+        <View style={styles.tabItems}>
+          {tabs.map((tab) => {
+            const isActive =
+              pathname === tab.href || (tab.icon === 'discover' && pathname === '/');
+            const color = isActive ? theme.tabActiveIcon : theme.tabInactive;
 
-        {props.children}
-
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name={{ ios: 'arrow.up.right.square', web: 'link' }}
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
-      </ThemedView>
+            return (
+              <Link key={tab.href} href={tab.href} asChild>
+                <Pressable
+                  accessibilityLabel={tab.label}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: isActive }}
+                  style={({ pressed }) => [
+                    styles.tabButton,
+                    isActive && { backgroundColor: theme.tabActiveBackground },
+                    pressed && styles.pressed,
+                  ]}>
+                  <SymbolView name={icons[tab.icon]} size={20} tintColor={color} />
+                  <ThemedText
+                    type="small"
+                    themeColor={isActive ? 'tabActiveLabel' : 'tabInactive'}>
+                    {tab.label}
+                  </ThemedText>
+                </Pressable>
+              </Link>
+            );
+          })}
+        </View>
+      </Surface>
     </View>
   );
 }
@@ -78,38 +74,30 @@ export function CustomTabList(props: TabListProps) {
 const styles = StyleSheet.create({
   tabListContainer: {
     position: 'absolute',
-    width: '100%',
-    padding: Spacing.three,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  innerContainer: {
-    paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
-    borderRadius: Spacing.five,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexGrow: 1,
-    gap: Spacing.two,
-    maxWidth: MaxContentWidth,
-  },
-  brandText: {
-    marginRight: 'auto',
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  tabButtonView: {
-    paddingVertical: Spacing.one,
+    left: 0,
+    right: 0,
     paddingHorizontal: Spacing.three,
+    alignItems: 'center',
+  },
+  tabSurface: {
+    width: '100%',
+    maxWidth: MaxContentWidth,
+    padding: Spacing.one,
+  },
+  tabItems: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  tabButton: {
+    flex: 1,
+    minHeight: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.one,
     borderRadius: Spacing.three,
   },
-  externalPressable: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: Spacing.one,
-    marginLeft: Spacing.three,
+  pressed: {
+    opacity: 0.75,
   },
 });
