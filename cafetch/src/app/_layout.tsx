@@ -3,6 +3,7 @@ import { useColorScheme } from 'react-native';
 
 import AppTabs from '@/components/app-tabs';
 import { Colors } from '@/constants/theme';
+import { CafeFiltersProvider } from '@/hooks/use-cafe-filters';
 
 
 export default function RootLayout() {
@@ -12,8 +13,10 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={{ ...routerTheme, colors: { ...routerTheme.colors, background: theme.background } }}>
-      <Stack screenOptions={{ headerShown: false }} />
-      <AppTabs />
+      <CafeFiltersProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+        <AppTabs />
+      </CafeFiltersProvider>
     </ThemeProvider>
   );
 }
