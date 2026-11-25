@@ -4,6 +4,7 @@ import { useColorScheme } from 'react-native';
 import AppTabs from '@/components/app-tabs';
 import { Colors } from '@/constants/theme';
 import { CafeFiltersProvider } from '@/hooks/use-cafe-filters';
+import { FavoritesProvider } from '@/hooks/use-favorites';
 
 
 export default function RootLayout() {
@@ -13,10 +14,12 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={{ ...routerTheme, colors: { ...routerTheme.colors, background: theme.background } }}>
-      <CafeFiltersProvider>
-        <Stack screenOptions={{ headerShown: false }} />
-        <AppTabs />
-      </CafeFiltersProvider>
+      <FavoritesProvider>
+        <CafeFiltersProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+          <AppTabs />
+        </CafeFiltersProvider>
+      </FavoritesProvider>
     </ThemeProvider>
   );
 }

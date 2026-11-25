@@ -59,7 +59,7 @@ export function filterCafes(cafes: Cafe[], filters: CafeFilters, query = '', now
   });
 }
 
-function isCafeOpenNow(cafe: Cafe, now: Date) {
+export function isCafeOpenNow(cafe: Cafe, now = new Date()) {
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
   const openingMinutes = minutesAfterMidnight(cafe.openingHours.opensAt);
   const closingMinutes = minutesAfterMidnight(cafe.openingHours.closesAt);

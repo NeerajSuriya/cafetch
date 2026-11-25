@@ -41,7 +41,8 @@ export default function AppTabs() {
         <View style={styles.tabItems}>
           {tabs.map((tab) => {
             const isActive =
-              pathname === tab.href || (tab.icon === 'discover' && pathname === '/');
+              pathname === tab.href ||
+              (tab.icon === 'discover' && (pathname === '/' || pathname === '/search'));
             const color = isActive ? theme.tabActiveIcon : theme.tabInactive;
 
             return (
